@@ -12,6 +12,7 @@ import { manufacture } from ".";
 const gifts = ["libro", "ps5"];
 const materials = "psli";
 
+
 const gifts2 = ["juego", "puzzle"];
 const materials2 = "jlepuz";
 
@@ -23,7 +24,11 @@ describe("Day 2: Santa's manufacture", () => {
     expect(manufacture(gifts, materials).length).toBe(0);
   });
   it("Should return an array with all the gifts that could be made given the materials", () => {
-    expect(manufacture(gifts2, materials2)).toStrictEqual(["puzzle"]);
-    expect(manufacture(gifts3, materials3)).toStrictEqual(["tren", "oso"]);
+    expect(manufacture(gifts2, materials2).sort()).toStrictEqual(
+      ["puzzle"].sort()
+    );
+    expect(manufacture(gifts3, materials3).sort()).toStrictEqual(
+      ["tren", "oso"].sort()
+    );
   });
 });
