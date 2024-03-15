@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-
+import { decode, reverse } from ".";
 /* 
 In 🎅 Santa's workshop, some Christmas messages have been written in a peculiar way: the words within the brackets must be read backwards.
 
@@ -22,20 +22,33 @@ console.log(b) // hello world!
 const c = decode('sa(u(cla)atn)s')
 console.log(c) // santaclaus
 
+sa
+  u(cla)atn)s
+
 // Step by step:
 // 1. Reverse the nested -> sa(ualcatn)s
 // 2. Reverse the remaining one -> santaclaus
 
  */
 
-export function decode(message: string): string {
-  return message;
-}
-
 const msg = "hola (odnum)";
+const nested = "sa(u(cla)atn)s";
 
 describe("Santa's workshop messages", () => {
+  it("Should reverse a string", () => {
+    expect(reverse("odnum")).toBe("mundo");
+  });
   it("Should return a string", () => {
     expect(decode(msg)).toBeTypeOf("string");
+  });
+  it("Should remove the parentheses from a string", () => {
+    expect(decode("(odnum)")).toBe("mundo");
+  });
+
+  it("Should reverse a string which is in parentheses", () => {
+    expect(decode(msg)).toBe("hola mundo");
+  });
+  it("Should reverse a string which is nested and in parentheses", () => {
+    expect(decode(nested)).toBe("santaclaus");
   });
 });
