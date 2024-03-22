@@ -17,9 +17,33 @@ Create a function that simulates the sled's movement for a given time and return
 */
 
 export function cyberTruck({ road, time }: { road: string; time: number }) {
+  const result: string[] = [];
   if (!road || !time) throw new Error();
-  return ["1"];
+  for (let idx = 0; idx < road.length; idx++) {
+    const element = road[idx];
+    if (idx >= 4) {
+      result.push(road.replaceAll("|", "*"));
+    } else {
+      result.push(road);
+    }
+  }
+  return result;
 }
+
+const road = "S..|...|..";
+const time = 10; // units of time
+const result = [
+  "S..|...|..", // initial state
+  ".S.|...|..", // sled advances on the road
+  "..S|...|..", // sled advances on the road
+  "..S|...|..", // sled stops at the barrier
+  "..S|...|..", // sled stops at the barrier
+  "...S...*..", // barrier opens, sled advances
+  "...*S..*..", // sled advances on the road
+  "...*.S.*..", // sled advances on the road
+  "...*..S*..", // sled advances on the road
+  "...*...S..", // passes through the open barrier
+];
 describe("Santa's cyber truck", () => {
   it("Should be a function", () => {
     expect(typeof cyberTruck).toBe("function");
@@ -30,5 +54,14 @@ describe("Santa's cyber truck", () => {
   it("Should return an array of strings", () => {
     // Check if the return type is an array of strings
     expect(cyberTruck({ road: "1", time: 2 })[0]).toBeTypeOf("string");
+  });
+  it("After 5 units of time, all barriers should be open", () => {
+    expect(
+      cyberTruck({ road, time }).some((state, idx) => {
+        if (idx >= 4) {
+          return state.includes("|");
+        }
+      })
+    ).toBeFalsy();
   });
 });
