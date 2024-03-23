@@ -1,5 +1,5 @@
 import { describe, it, expect, expectTypeOf } from "vitest";
-import { s } from "vitest/dist/reporters-P7C2ytIv";
+import { sledStepper, stepperII } from ".";
 /* 
 Santa 🎅 is testing his new electric sled, the CyberReindeer, on a North Pole road. The road is represented by a string of characters, where:
 
@@ -16,20 +16,6 @@ All barriers start closed, but after 5 units of time, they all open forever.
 Create a function that simulates the sled's movement for a given time and returns an array of strings representing the state of the road at each unit of time:
 */
 
-export function cyberTruck({ road, time }: { road: string; time: number }) {
-  const result: string[] = [];
-  if (!road || !time) throw new Error();
-  for (let idx = 0; idx < road.length; idx++) {
-    const element = road[idx];
-    if (idx >= 4) {
-      result.push(road.replaceAll("|", "*"));
-    } else {
-      result.push(road);
-    }
-  }
-  return result;
-}
-
 const road = "S..|...|..";
 const time = 10; // units of time
 const result = [
@@ -44,24 +30,49 @@ const result = [
   "...*..S*..", // sled advances on the road
   "...*...S..", // passes through the open barrier
 ];
-describe("Santa's cyber truck", () => {
+
+describe("Sled Stepper", () => {
   it("Should be a function", () => {
-    expect(typeof cyberTruck).toBe("function");
+    expect(sledStepper).toBeTypeOf("function");
+  });
+  it("Should throw if param is not type of string and is equal to '' ", () => {
+    expect(() => sledStepper("", 0)).toThrow();
+  });
+  it("Should return a string", () => {
+    expect(sledStepper("S..|...|..", 1)).toBeTypeOf("string");
+  });
+  it("Should make S move one step forward if • or *", () => {
+    expect(sledStepper("S..|...|..", 0)).toBe("S..|...|..");
+    expect(sledStepper("S..|...|..", 1)).toBe(".S.|...|..");
+    expect(sledStepper("S..|...|..", 2)).toBe("..S|...|..");
+    expect(sledStepper("S..|...|..", 3)).toBe("..S|...|..");
+    expect(sledStepper("S..|...|..", 4)).toBe("..S|...|..");
+    expect(sledStepper("S..|...|..", 5)).toBe("...S...*..");
+    expect(sledStepper("S..|...|..", 6)).toBe("...*S..*..");
+    expect(sledStepper("S..|...|..", 7)).toBe("...*.S.*..");
+    expect(sledStepper("S..|...|..", 8)).toBe("...*..S*..");
+    expect(sledStepper("S..|...|..", 9)).toBe("...*...S..");
+  });
+  it("Should update the path behind the sled replacing with the old symbol after it leaves it", () => {
+    expect(sledStepper("S..|...|..", 6)).toBe("...*S..*..");
+  });
+  it("Should make S stop if |", () => {
+    expect(sledStepper("S..|...|..", 3)).toBe("..S|...|..");
+  });
+});
+
+describe("Sled Stepper II", () => {
+  it("Should be a function", () => {
+    expect(typeof stepperII).toBe("function");
   });
   it("Should throw if not called with a string road and a number time argument", () => {
-    expect(() => cyberTruck({ road: "", time: 0 })).toThrow();
+    expect(() => stepperII({ path: "", step: 0 })).toThrow();
   });
   it("Should return an array of strings", () => {
     // Check if the return type is an array of strings
-    expect(cyberTruck({ road: "1", time: 2 })[0]).toBeTypeOf("string");
+    expect(stepperII({ path: "1", step: 2 })[0]).toBeTypeOf("string");
   });
-  it("After 5 units of time, all barriers should be open", () => {
-    expect(
-      cyberTruck({ road, time }).some((state, idx) => {
-        if (idx >= 4) {
-          return state.includes("|");
-        }
-      })
-    ).toBeFalsy();
+  it("Should match the expected states", () => {
+    expect(stepperII({ path: road, step: time })).toStrictEqual(result);
   });
 });
